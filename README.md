@@ -15,6 +15,10 @@
 </p>
 
 <p align="center">
+  panelwind brings the approach of <a href="https://github.com/shadcn-ui/lint">@shadcn/lint</a> to React Native and Expo, and adds what only a device can tell you.
+</p>
+
+<p align="center">
   <a href="./docs/README.md"><b>Documentation</b></a> ·
   <a href="#get-started">Get started</a> ·
   <a href="#rules">Rules</a> ·
