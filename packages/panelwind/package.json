@@ -1,0 +1,73 @@
+{
+  "name": "panelwind",
+  "version": "0.0.0",
+  "description": "An agent-first ESLint plugin for Expo design systems: it reads your Uniwind theme, components and variants, and explains every styling error in terms of what your project already has.",
+  "license": "MIT",
+  "author": "Khalid Abdi",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panel-ui/panelwind.git",
+    "directory": "packages/panelwind"
+  },
+  "homepage": "https://github.com/panel-ui/panelwind#readme",
+  "bugs": {
+    "url": "https://github.com/panel-ui/panelwind/issues"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "expo",
+    "react-native",
+    "uniwind",
+    "tailwindcss",
+    "design-system",
+    "panelui",
+    "agents"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "./dist/native-worker.js"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "native:generate": "node scripts/generate-native-styles.mjs"
+  },
+  "dependencies": {
+    "@typescript-eslint/parser": "^8.40.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.30.0"
+  },
+  "devDependencies": {
+    "@eslint/core": "^0.17.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.33.0",
+    "react-native": "0.86.2",
+    "tailwindcss": "^4.3.0",
+    "tsdown": "^0.12.0",
+    "typescript": "^5.9.2",
+    "uniwind": "^1.10.0",
+    "vitest": "^3.2.6"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

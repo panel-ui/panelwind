@@ -1,0 +1,21 @@
+{
+  "name": "panelwind-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "An agent-first linter for Expo design systems built with Uniwind.",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=panelwind",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspace=panelwind",
+    "native:generate": "npm run native:generate --workspace=panelwind",
+    "docs:check": "node scripts/check-docs.mjs"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "license": "MIT"
+}
