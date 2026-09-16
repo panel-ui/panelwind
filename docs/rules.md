@@ -9,8 +9,8 @@ A class belongs to one category, and a policy is written in terms of them.
 
 | Category | Classes | Who usually owns it |
 | --- | --- | --- |
-| `layout` | `flex-1`, `w-full`, `items-center`, `absolute`, `text-center` | The screen placing the component |
-| `spacing` | `p-4`, `mt-2`, `gap-2` | The component, for its own padding |
+| `layout` | `flex-1`, `w-full`, `items-center`, `absolute`, `text-center`, `mt-2` | The screen placing the component |
+| `spacing` | `p-4`, `gap-2` | The component, for its own padding |
 | `color` | `bg-primary`, `text-foreground`, `border-border` | The component |
 | `typography` | `text-sm`, `font-medium`, `leading-5` | The component |
 | `shape` | `rounded-lg`, `border-2` | The component |
@@ -19,6 +19,9 @@ A class belongs to one category, and a policy is written in terms of them.
 
 `allow: ['layout']` is where most projects start: where a component sits and how
 big its box is belongs to whatever is placing it; how it looks belongs to it.
+Margin is layout for that reason — room around a component is a decision about
+placement, and the component cannot make it. Padding is not: that is the size of
+the thing, which is what a size variant is for.
 
 Tailwind overloads several utilities, and the project's own tokens are what
 separate them — `text-sm` is typography, `text-primary` is colour because

@@ -27,6 +27,13 @@ tester().run('no-restyle', noRestyle as never, {
       filename: screen,
       options: [{ allow: ['layout'], contracts: [{ pattern: '^Button$', allow: ['layout', 'mt-*'] }] }],
     },
+    // B3: where a component sits is the caller's decision, so margin is
+    // allowed by `layout` — the README's own contract example assumes it.
+    {
+      code: `${importButton}<Button className="mt-4 mb-2 -ml-1" />`,
+      filename: screen,
+      options: LAYOUT,
+    },
     {
       code: `${importCard}<CardTitle className="text-lg" />`,
       filename: screen,
@@ -52,7 +59,12 @@ tester().run('no-restyle', noRestyle as never, {
       code: `${importButton}<Button className="p-6" />`,
       filename: screen,
       options: LAYOUT,
-      errors: [{ message: /Use a size \(sm, md, lg\), or gap on the view around it for room around it\./ }],
+      errors: [
+        {
+          message:
+            /Use a size \(sm, md, lg\), or margin here or gap on the view around it for room around it\./,
+        },
+      ],
     },
     {
       code: `${importButton}<Button className="rounded-full" />`,
@@ -61,7 +73,8 @@ tester().run('no-restyle', noRestyle as never, {
       errors: [{ message: /owns its shape/ }],
     },
     {
-      code: `${importButton}<Button className="mt-4" />`,
+      // Padding is still the component's: it is the size of the thing.
+      code: `${importButton}<Button className="pt-4" />`,
       filename: screen,
       options: LAYOUT,
       errors: [{ message: /owns its spacing/ }],

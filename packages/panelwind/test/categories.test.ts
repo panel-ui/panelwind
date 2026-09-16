@@ -50,8 +50,13 @@ const expected: Record<Category, string[]> = {
     'grow',
     'text-center',
     'size-6',
+    // Margin is placement: where the thing sits, not how big it is.
+    'mt-4',
+    '-mt-2',
+    'mx-auto',
+    'mb-2',
   ],
-  spacing: ['p-4', 'px-2.5', 'py-2', 'mt-4', '-mt-2', 'mx-auto', 'gap-2', 'gap-x-1.5', 'pt-safe'],
+  spacing: ['p-4', 'px-2.5', 'py-2', 'gap-2', 'gap-x-1.5', 'pt-safe'],
   color: [
     'bg-primary',
     'bg-card/60',

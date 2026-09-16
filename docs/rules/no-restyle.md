@@ -36,7 +36,7 @@ suggestion is always the set that exists today.
 
 - **`allow`** — categories and class patterns every component accepts. `layout`
   is the usual starting point: where a component sits and how big its box is
-  belongs to the screen placing it.
+  belongs to the screen placing it, margin included.
 - **`deny`** — refused even when `allow` would have permitted it. Checked first.
 - **`contracts`** — a policy for the components whose name matches `pattern`.
   A contract's `allow` **replaces** the rule's, so repeat `layout` to keep it;
@@ -82,12 +82,13 @@ they live in:
 
 ## Spacing is answered with sizes
 
-Padding on a control is nearly always a size, and room around it belongs to
-whatever is placing it — so a spacing finding offers both:
+Padding on a control is nearly always a size, and room around it is margin,
+which `layout` already allows — so a spacing finding offers both:
 
 ```text
 "p-6" is not allowed on <Button>: <Button> owns its spacing.
-Use a size (sm, md, lg), or gap on the view around it for room around it.
+Use a size (sm, md, lg), or margin here or gap on the view around it for room
+around it.
 ```
 
 Where the component has no size axis, only the second half is offered.
