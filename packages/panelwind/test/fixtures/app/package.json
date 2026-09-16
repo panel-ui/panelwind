@@ -1,0 +1,6 @@
+{
+  "name": "panelwind-fixture-app",
+  "private": true,
+  "version": "0.0.0",
+  "description": "A small Expo project, used by the tests so discovery, the theme reader and the oracle run against a real one."
+}

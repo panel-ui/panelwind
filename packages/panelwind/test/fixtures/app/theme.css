@@ -1,0 +1,50 @@
+/*
+ * A theme in the shape a native design system writes one: the names are
+ * declared in @theme, and every theme gives them a value of its own, because
+ * the values have to be static by the time they reach the device.
+ */
+@theme {
+  --color-background: unset;
+  --color-foreground: unset;
+  --color-card: unset;
+  --color-card-foreground: unset;
+  --color-primary: unset;
+  --color-primary-foreground: unset;
+  --color-muted: unset;
+  --color-muted-foreground: unset;
+  --color-destructive: unset;
+  --color-border: unset;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+}
+
+:root {
+  @variant light {
+    --color-background: #ffffff;
+    --color-foreground: #262626;
+    --color-card: #ffffff;
+    --color-card-foreground: #262626;
+    --color-primary: #2563eb;
+    --color-primary-foreground: #ffffff;
+    --color-muted: #f4f4f5;
+    --color-muted-foreground: #71717a;
+    --color-destructive: #dc2626;
+    --color-border: rgba(0, 0, 0, 0.08);
+  }
+
+  @variant dark {
+    --color-background: #0a0a0a;
+    --color-foreground: #fafafa;
+    --color-card: #141414;
+    --color-card-foreground: #fafafa;
+    --color-primary: #3b82f6;
+    --color-primary-foreground: #0a0a0a;
+    --color-muted: #1f1f1f;
+    --color-muted-foreground: #878787;
+    --color-destructive: #ef4444;
+    --color-border: rgba(255, 255, 255, 0.06);
+  }
+}

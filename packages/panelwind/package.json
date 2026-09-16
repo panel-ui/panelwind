@@ -48,7 +48,9 @@
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "native:generate": "node scripts/generate-native-styles.mjs"
+    "native:generate": "node scripts/generate-native-styles.mjs",
+    "pretest": "tsdown",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@typescript-eslint/parser": "^8.40.0"
