@@ -1,11 +1,11 @@
 /**
- * panelwind — what the linter knows about a project, and (once the rules are
- * wired in) the ESLint plugin itself.
+ * panelwind — the plugin, its presets, and a window onto what it knows.
  *
- * The project model is exported because the same answers are useful to other
- * tooling: which components a project has, what its tokens are, and what a
- * class does on a device. Experimental until 1.0.
+ * The project model is exported because the same answers are useful outside a
+ * lint run: which components a project has, what its tokens are, and what a
+ * class does once it reaches a device. Experimental until 1.0.
  */
+import { configs } from './configs';
 import { plugin } from './plugin';
 import { componentsFor } from './project/components';
 import { projectFor } from './project/config';
@@ -19,7 +19,15 @@ import {
   UNIWIND_VERSION,
 } from './native/support';
 
-export { plugin, rules } from './plugin';
+/**
+ * One object, whether it is reached by name or as the default: the presets
+ * name the plugin, so the two have to be the same plugin.
+ */
+const panelwind = Object.assign(plugin, { configs });
+
+export { rules } from './plugin';
+export { configs } from './configs';
+export { panelwind as plugin };
 
 export const project = {
   projectFor,
@@ -39,4 +47,45 @@ export const native = {
   uniwind: UNIWIND_VERSION,
 };
 
-export default plugin;
+export type Category =
+  | 'layout'
+  | 'color'
+  | 'typography'
+  | 'spacing'
+  | 'shape'
+  | 'effects'
+  | 'motion';
+
+/** What a rule's `message` can be: one string, or one per category. */
+export type RuleMessage = string | Partial<Record<Category | 'default', string>>;
+
+export type Contract = {
+  /** A regular expression matched against the component's name. */
+  pattern: string;
+  allow?: string[];
+  deny?: string[];
+  message?: RuleMessage;
+};
+
+export type Recognition = {
+  ui?: string | string[];
+  componentImports?: string[];
+  ignoreImports?: string[];
+  mergeFunctions?: string[];
+  variantFunctions?: string[];
+};
+
+export type RestyleOptions = Recognition & {
+  allow?: string[];
+  deny?: string[];
+  contracts?: Contract[];
+  message?: RuleMessage;
+};
+
+export type TokenOptions = Recognition & {
+  allow?: string[];
+  message?: string;
+  scanAllStrings?: boolean;
+};
+
+export default panelwind;
