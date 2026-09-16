@@ -10,7 +10,22 @@ import { noUnknownClasses } from './rules/no-unknown-classes';
 import { noWebOnlyClasses } from './rules/no-web-only-classes';
 import { requireStaticClasses } from './rules/require-static-classes';
 
-export const rules = {
+/**
+ * A rule, as this plugin writes one. Declared rather than inferred so the
+ * published types stay a description of the plugin instead of a transcript of
+ * seven option schemas.
+ */
+export type RuleModule = {
+  meta: {
+    type: 'problem' | 'suggestion' | 'layout';
+    docs: { description: string; url: string };
+    schema: readonly unknown[];
+    messages: Record<string, string>;
+  };
+  create(context: any): Record<string, (node: any) => void>;
+};
+
+export const rules: Record<string, RuleModule> = {
   'no-restyle': noRestyle,
   'no-raw-colors': noRawColors,
   'no-arbitrary-values': noArbitraryValues,

@@ -111,9 +111,13 @@ export function nearestToken(value: string, tokens: Map<string, string>): Neares
     const lab = toLab(declared);
     if (!lab) continue;
     const away = distance(target, lab);
-    if (!best || away < best.distance - TIE || (Math.abs(away - best.distance) <= TIE && plainer(token, best.token))) {
-      best = { token, distance: Math.min(away, best?.distance ?? away) };
+    if (!best) {
+      best = { token, distance: away };
+      continue;
     }
+    const tied = Math.abs(away - best.distance) <= TIE;
+    if (away < best.distance - TIE) best = { token, distance: away };
+    else if (tied && plainer(token, best.token)) best = { token, distance: best.distance };
   }
   return best;
 }
