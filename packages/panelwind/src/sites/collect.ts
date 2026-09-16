@@ -231,6 +231,7 @@ export function readClasses(
    * between fragments does not report once per fragment.
    */
   const reported = new Set<Ast>();
+  const objectBehind = objectBehindFactory(reader);
   let quiet = 0;
   const cannotRead = (found: Ast) => {
     if (quiet > 0 || reported.has(found)) return;
@@ -338,10 +339,68 @@ export function readClasses(
         visit(held, currentMode, hops + 1);
         return;
       }
+      // A type wrapper says nothing about the value, so the value underneath
+      // is what carries the classes.
+      case 'TSAsExpression':
+      case 'TSSatisfiesExpression':
+      case 'TSNonNullExpression':
+      case 'TSTypeAssertion':
+        visit(current.expression, currentMode, hops);
+        return;
+      case 'MemberExpression': {
+        // A lookup table is the documented way to keep classes readable:
+        // `TONE[k]` can only produce one of the values written in `TONE`, so
+        // every one of them is checked and none of them is unreadable.
+        const table = objectBehind(current.object, hops);
+        if (!table) {
+          cannotRead(current);
+          return;
+        }
+        for (const property of table.properties ?? []) {
+          if (property.type === 'SpreadElement') {
+            cannotRead(current);
+            continue;
+          }
+          visit(property.value, currentMode, table.hops);
+        }
+        return;
+      }
       default:
         cannotRead(current);
     }
   }
+}
+
+/** `as const`, `satisfies` and `!` wrap a value without changing it. */
+const TYPE_ONLY = new Set([
+  'TSAsExpression',
+  'TSSatisfiesExpression',
+  'TSNonNullExpression',
+  'TSTypeAssertion',
+]);
+
+function withoutTypeWrappers(node: Ast): Ast {
+  let current = node;
+  while (current && TYPE_ONLY.has(current.type)) current = current.expression;
+  return current;
+}
+
+/**
+ * The object literal a member expression reads from, when it is one this file
+ * declares. One hop, the same as a plain identifier: a table built somewhere
+ * else is a table the bundler's scanner cannot see either.
+ */
+function objectBehindFactory(reader: Reader) {
+  return function objectBehind(node: Ast, hops: number): (Ast & { hops: number }) | null {
+    const object = withoutTypeWrappers(node);
+    if (!object) return null;
+    if (object.type === 'ObjectExpression') return { ...object, hops };
+    if (object.type === 'Identifier' && hops < 1) {
+      const held = withoutTypeWrappers(reader.locals.get(object.name));
+      if (held?.type === 'ObjectExpression') return { ...held, hops: hops + 1 };
+    }
+    return null;
+  };
 }
 
 function calleeName(node: Ast): string {

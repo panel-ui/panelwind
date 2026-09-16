@@ -45,6 +45,13 @@ tester().run('no-unknown-classes', noUnknownClasses as never, {
       filename: screen,
       errors: [{ message: /"rounded-huge" generates no CSS/ }],
     },
+    {
+      // Reading a lookup table means reading its values: a broken class in one
+      // is found wherever the table is used.
+      code: 'const TONE = { a: "rounded-huge", b: "p-4" } as const;\n<View className={TONE[k]} />;',
+      filename: screen,
+      errors: [{ message: /"rounded-huge" generates no CSS/ }],
+    },
   ],
 });
 
