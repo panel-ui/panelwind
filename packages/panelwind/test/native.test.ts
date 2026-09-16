@@ -64,8 +64,13 @@ describe('what survives onto a device', () => {
     expect(verdict.kind === 'properties' && verdict.properties).toContain('float');
   });
 
-  it('reports a value React Native does not have', () => {
-    expect(verdictFor('grid').kind).toBe('properties');
+  it('reports a value React Native does not have, apart from a property it does not have', () => {
+    const verdict = verdictFor('grid');
+    expect(verdict.kind).toBe('values');
+    // React Native has a display; it does not have this one, and the two are
+    // different sentences.
+    expect(verdict.kind === 'values' && verdict.property).toBe('display');
+    expect(verdict.kind === 'values' && verdict.keywords).toContain('flex');
   });
 
   it('reports a rule that styles the children instead of the element', () => {

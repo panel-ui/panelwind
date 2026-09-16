@@ -21,6 +21,7 @@ export type Verdict =
   | { kind: 'variant'; variant: string; reason: string }
   | { kind: 'selector'; reason: string }
   | { kind: 'properties'; properties: string[] }
+  | { kind: 'values'; property: string; value: string; keywords: string[] }
   | { kind: 'empty' };
 
 const PROPERTIES = new Set<string>([...table.properties, ...table.rewritten]);
@@ -108,6 +109,8 @@ export function declarationVerdict(css: string): Verdict {
   if (!rules.length) return { kind: 'empty' };
 
   const unsupported = new Set<string>();
+  /** A property React Native has, given a value it does not take. */
+  const unsupportedValues: { property: string; value: string }[] = [];
   let styledSomethingElse = false;
 
   for (const rule of rules) {
@@ -119,11 +122,26 @@ export function declarationVerdict(css: string): Verdict {
       const property = camel(declaration.property);
       if (property.startsWith('--')) continue;
       if (lands(property, declaration.value)) return { kind: 'native' };
-      unsupported.add(declaration.property);
+      // "React Native has no display" would be false: it has one, and this is
+      // not a value it takes. The two are different sentences.
+      if (PROPERTIES.has(property) && !DROPPED.has(property)) {
+        unsupportedValues.push({ property: declaration.property, value: declaration.value.trim() });
+      } else {
+        unsupported.add(declaration.property);
+      }
     }
   }
 
   if (unsupported.size) return { kind: 'properties', properties: [...unsupported] };
+  if (unsupportedValues.length) {
+    const first = unsupportedValues[0]!;
+    return {
+      kind: 'values',
+      property: first.property,
+      value: first.value,
+      keywords: KEYWORDS[camel(first.property)] ?? [],
+    };
+  }
   if (styledSomethingElse) {
     return {
       kind: 'selector',

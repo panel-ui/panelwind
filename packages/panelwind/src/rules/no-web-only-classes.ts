@@ -26,6 +26,8 @@ const MESSAGES = {
     '"{{className}}" does nothing on a device: {{reason}}. Put the spacing on the children, or use `gap-*` on this view.',
   properties:
     '"{{className}}" does nothing on a device: React Native has no {{properties}}.',
+  values:
+    '"{{className}}" does nothing on a device: React Native\'s {{property}} does not take {{value}}{{alternatives}}.',
   empty: '"{{className}}" does nothing on a device: it generates nothing a native style can carry.',
 };
 
@@ -123,6 +125,22 @@ export const noWebOnlyClasses = {
               node,
               messageId: 'properties',
               data: { className: token, properties: listOf(verdict.properties) },
+            },
+            custom
+          );
+        } else if (verdict.kind === 'values') {
+          emit(
+            {
+              node,
+              messageId: 'values',
+              data: {
+                className: token,
+                property: verdict.property,
+                value: verdict.value,
+                alternatives: verdict.keywords.length
+                  ? ` — only ${listOf(verdict.keywords)}`
+                  : '',
+              },
             },
             custom
           );

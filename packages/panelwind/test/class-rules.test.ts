@@ -38,6 +38,13 @@ tester().run('no-unknown-classes', noUnknownClasses as never, {
       filename: screen,
       errors: [{ message: /Did you mean "rounded-lg"/ }],
     },
+    {
+      // The fragments either side of an expression are dropped; the classes
+      // written out in full are still checked.
+      code: '<View className={`rounded-huge bg-${tone} p-4`} />',
+      filename: screen,
+      errors: [{ message: /"rounded-huge" generates no CSS/ }],
+    },
   ],
 });
 
@@ -54,6 +61,9 @@ tester().run('no-web-only-classes', noWebOnlyClasses as never, {
       filename: path.join(fixture, 'src', 'app', 'screen.web.tsx'),
     },
     { code: '<View className="web:hover:bg-primary" />', filename: screen },
+    // Half a class is not a class: `text-` belongs to no-unknown-classes only
+    // when somebody actually wrote it.
+    { code: '<View className={`text-${size}`} />', filename: screen },
   ],
   invalid: [
     {
@@ -74,7 +84,14 @@ tester().run('no-web-only-classes', noWebOnlyClasses as never, {
     {
       code: '<View className="grid" />',
       filename: screen,
-      errors: [{ message: /does nothing on a device/ }],
+      // React Native has a display; grid is not one of its values, and saying
+      // "React Native has no display" would be false.
+      errors: [
+        {
+          message:
+            /React Native's display does not take grid — only contents, flex and none\./,
+        },
+      ],
     },
     {
       code: '<View className="backdrop-blur-sm" />',

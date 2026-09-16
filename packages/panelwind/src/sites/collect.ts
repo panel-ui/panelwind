@@ -225,6 +225,18 @@ export function readClasses(
 ): { strings: ClassString[]; unreadable: Ast[] } {
   const strings: ClassString[] = [];
   const unreadable: Ast[] = [];
+  /**
+   * One value the linter cannot read is one finding. A template already
+   * reported does not report its expressions again, and a template that sits
+   * between fragments does not report once per fragment.
+   */
+  const reported = new Set<Ast>();
+  let quiet = 0;
+  const cannotRead = (found: Ast) => {
+    if (quiet > 0 || reported.has(found)) return;
+    reported.add(found);
+    unreadable.push(found);
+  };
   visit(node, mode, depth);
   return { strings, unreadable };
 
@@ -238,11 +250,29 @@ export function readClasses(
         visit(current.expression, currentMode, hops);
         return;
       case 'TemplateLiteral': {
-        for (const quasi of current.quasis ?? []) {
+        // A fragment touching an expression is half a class: the `text-` of
+        // `text-${size}` is not a class anybody wrote, and reporting it as an
+        // unknown one sends the reader looking for a typo that is not there.
+        const quasis = current.quasis ?? [];
+        let partial = false;
+        quasis.forEach((quasi: Ast, index: number) => {
           const text = quasi.value?.cooked ?? quasi.value?.raw ?? '';
-          if (text.trim()) strings.push({ value: text, node: current });
-        }
+          const joinsBefore = index > 0 && !/^\s/.test(text);
+          const joinsAfter = index < quasis.length - 1 && !/\s$/.test(text);
+          const tokens = text.split(/\s+/).filter(Boolean);
+          if (joinsBefore) tokens.shift();
+          if (joinsAfter) tokens.pop();
+          if (tokens.length) strings.push({ value: tokens.join(' '), node: current });
+          if (joinsBefore || joinsAfter) {
+            partial = true;
+            cannotRead(current);
+          }
+        });
+        // The expressions are still read, in case one holds whole classes; what
+        // they cannot supply has already been said once, about the template.
+        if (partial) quiet++;
         for (const expression of current.expressions ?? []) visit(expression, currentMode, hops);
+        if (partial) quiet--;
         return;
       }
       case 'ConditionalExpression':
@@ -286,24 +316,24 @@ export function readClasses(
           for (const argument of current.arguments ?? []) visit(argument, 'values', hops);
           return;
         }
-        unreadable.push(current);
+        cannotRead(current);
         return;
       }
       case 'Identifier': {
         if (hops >= 1) {
-          unreadable.push(current);
+          cannotRead(current);
           return;
         }
         const held = reader.locals.get(current.name);
         if (held === undefined || held === null) {
-          unreadable.push(current);
+          cannotRead(current);
           return;
         }
         visit(held, currentMode, hops + 1);
         return;
       }
       default:
-        unreadable.push(current);
+        cannotRead(current);
     }
   }
 }
