@@ -64,6 +64,37 @@ export function Save({ className }) {
     },
     // Not a design-system component, and the rule was not asked to look wider.
     { code: '<View className={styles} />', filename: screen },
+    // A1: an empty quasi at either end of a template joins nothing — both
+    // branches here are written out, so there is nothing the bundler misses.
+    {
+      code: `${importButton}<Button className={\`p-2 \${lg ? "p-4" : "p-2"}\`} />`,
+      filename: screen,
+    },
+    {
+      code: `${importButton}<Button className={\`\${lg ? "p-4" : "p-2"} p-2\`} />`,
+      filename: screen,
+    },
+    // A2: a lookup table written out in full is the documented fix.
+    {
+      code: `${importButton}
+const TONE = { a: "p-2", b: "p-4" } as const;
+export const Screen = () => <Button className={TONE[k]} />;`,
+      filename: screen,
+    },
+    {
+      code: `${importButton}
+const TONE = { a: "p-2", b: "p-4" };
+export const Screen = () => <Button className={TONE.a} />;`,
+      filename: screen,
+    },
+    // A3: the props object carries the className its caller wrote.
+    {
+      code: `${importButton}
+export function Card(props: { className?: string }) {
+  return <Button className={props.className} />;
+}`,
+      filename: screen,
+    },
   ],
 
   invalid: [
@@ -76,6 +107,18 @@ export function Save({ className }) {
       code: `${importButton}<Button className={props.tone} />`,
       filename: screen,
       errors: [{ message: /on <Button> cannot be read/ }],
+    },
+    // A1: an empty quasi between two expressions joins both of them.
+    {
+      code: `${importButton}<Button className={\`\${a}\${b}\`} />`,
+      filename: screen,
+      errors: [{ message: /cannot be read/ }],
+    },
+    // A2: a lookup the linter cannot resolve is still a lookup it cannot read.
+    {
+      code: `${importButton}<Button className={TONES[k]} />`,
+      filename: screen,
+      errors: [{ message: /cannot be read/ }],
     },
     {
       code: '<View className={makeClasses(tone)} />',

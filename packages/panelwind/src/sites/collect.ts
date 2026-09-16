@@ -257,8 +257,14 @@ export function readClasses(
         let partial = false;
         quasis.forEach((quasi: Ast, index: number) => {
           const text = quasi.value?.cooked ?? quasi.value?.raw ?? '';
-          const joinsBefore = index > 0 && !/^\s/.test(text);
-          const joinsAfter = index < quasis.length - 1 && !/\s$/.test(text);
+          // The empty quasi either side of `${…}` at the start or end of a
+          // template is not a fragment: nothing was written there to be half of
+          // a class. An empty one between two expressions is, and joins both.
+          const atStart = index === 0;
+          const atEnd = index === quasis.length - 1;
+          const emptyEnd = text === '' && (atStart || atEnd);
+          const joinsBefore = !atStart && !emptyEnd && !/^\s/.test(text);
+          const joinsAfter = !atEnd && !emptyEnd && !/\s$/.test(text);
           const tokens = text.split(/\s+/).filter(Boolean);
           if (joinsBefore) tokens.shift();
           if (joinsAfter) tokens.pop();
