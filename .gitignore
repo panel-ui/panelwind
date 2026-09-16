@@ -5,3 +5,5 @@ dist/
 .vitest/
 coverage/
 .eslintcache
+packages/panelwind/README.md
+packages/panelwind/LICENSE

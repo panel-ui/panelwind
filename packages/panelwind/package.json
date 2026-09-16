@@ -50,7 +50,9 @@
     "test": "vitest run",
     "native:generate": "node scripts/generate-native-styles.mjs",
     "pretest": "tsdown",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepack": "node scripts/prepack.mjs",
+    "postpack": "node -e \"const fs=require('node:fs');for (const file of ['README.md','LICENSE']) fs.rmSync(file,{force:true})\""
   },
   "dependencies": {
     "@typescript-eslint/parser": "^8.40.0"
