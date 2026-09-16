@@ -6,6 +6,7 @@
  * tooling: which components a project has, what its tokens are, and what a
  * class does on a device. Experimental until 1.0.
  */
+import { plugin } from './plugin';
 import { componentsFor } from './project/components';
 import { projectFor } from './project/config';
 import { themeFor } from './project/theme';
@@ -17,6 +18,8 @@ import {
   REACT_NATIVE_VERSION,
   UNIWIND_VERSION,
 } from './native/support';
+
+export { plugin, rules } from './plugin';
 
 export const project = {
   projectFor,
@@ -35,3 +38,5 @@ export const native = {
   reactNative: REACT_NATIVE_VERSION,
   uniwind: UNIWIND_VERSION,
 };
+
+export default plugin;
