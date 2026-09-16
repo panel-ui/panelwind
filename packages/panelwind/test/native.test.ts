@@ -5,7 +5,9 @@
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { cssFor, resetOracle } from '../src/native/client';
+import * as fs from 'node:fs';
+
+import { cachedAnswers, cssFor, resetOracle } from '../src/native/client';
 import { declarationVerdict, variantVerdict } from '../src/native/support';
 
 const entry = fileURLToPath(new URL('./fixtures/app/global.css', import.meta.url));
@@ -41,6 +43,25 @@ describe('the project’s own Tailwind', () => {
   it('generates nothing for a class that does not exist', () => {
     expect(css('rounded-huge')).toBeNull();
     expect(css('bg-highlight')).toBeNull();
+  });
+});
+
+describe('the answer cache', () => {
+  it('drops what it knew about an older version of the stylesheet', () => {
+    const before = fs.statSync(entry);
+    cssFor(entry, ['p-1', 'p-2', 'p-3']);
+    expect(cachedAnswers()).toBeGreaterThanOrEqual(3);
+
+    // An editor session edits the theme and lints again for hours; the answers
+    // to the version that is gone are never asked for again.
+    const later = new Date(before.mtimeMs + 2_000);
+    fs.utimesSync(entry, later, later);
+    try {
+      cssFor(entry, ['p-4']);
+      expect(cachedAnswers()).toBe(1);
+    } finally {
+      fs.utimesSync(entry, before.atime, before.mtime);
+    }
   });
 });
 

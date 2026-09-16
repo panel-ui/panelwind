@@ -117,6 +117,7 @@ function ask(entry: string, tokens: string[]): Reply | null {
  */
 export function cssFor(entry: string, tokens: string[]): Map<string, string | null> | null {
   const stamp = modifiedAt(entry) ?? 0;
+  forget(entry, stamp);
   const results = new Map<string, string | null>();
   const missing: string[] = [];
 
@@ -141,6 +142,28 @@ export function cssFor(entry: string, tokens: string[]): Map<string, string | nu
     results.set(token, css);
   });
   return results;
+}
+
+/**
+ * What was true of an earlier version of this stylesheet. An editor session
+ * lints the same project for hours and the theme is edited as it goes, so
+ * without this the answers to every version that has been and gone are held
+ * for as long as the process lives.
+ */
+function forget(entry: string, stamp: number) {
+  const current = `${entry}:${stamp}:`;
+  for (const key of answers.keys()) {
+    if (key.startsWith(`${entry}:`) && !key.startsWith(current)) answers.delete(key);
+  }
+  const list = `${entry}:${stamp}`;
+  for (const key of classLists.keys()) {
+    if (key.startsWith(`${entry}:`) && key !== list) classLists.delete(key);
+  }
+}
+
+/** How many answers are held, for the test that checks they are let go. */
+export function cachedAnswers(): number {
+  return answers.size;
 }
 
 /** Every class this project's Tailwind can generate — the source of "did you mean". */
