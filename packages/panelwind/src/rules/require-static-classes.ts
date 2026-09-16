@@ -9,7 +9,7 @@
  * The fix is always the same shape: write the whole class in each branch, so
  * the text is there to be compiled. See docs/rules/require-static-classes.md.
  */
-import { classSiteVisitors } from '../sites/collect';
+import { classSiteVisitors, isClassAttribute } from '../sites/collect';
 import { reporter } from './messages';
 import { messageSchema, recognitionSchema } from './policy-schema';
 import { withSettings } from './settings';
@@ -54,7 +54,7 @@ export const requireStaticClasses = {
       // the caller is where it can be read.
       if (!site.component && !everywhere) return;
       for (const node of site.unreadable) {
-        if (node.type === 'Identifier' && node.name === 'className') continue;
+        if (received(node)) continue;
         emit(
           {
             node,
@@ -67,3 +67,18 @@ export const requireStaticClasses = {
     });
   },
 };
+
+/**
+ * A class value the component was handed, rather than one it built: the
+ * destructured `className`, and the same prop read off the props object. It is
+ * the caller who wrote it and the caller where it can be read, so it is
+ * reported there. A property reached through anything longer than one object —
+ * `theme.colors.className` — is not a prop and is still reported here.
+ */
+function received(node: any): boolean {
+  if (node.type === 'Identifier') return isClassAttribute(node.name);
+  if (node.type === 'MemberExpression' && !node.computed && node.object?.type === 'Identifier') {
+    return isClassAttribute(node.property?.name ?? '');
+  }
+  return false;
+}
