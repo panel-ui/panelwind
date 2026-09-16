@@ -1,0 +1,41 @@
+name: Publish
+
+# Cutting a GitHub release publishes the package. There is no npm token in
+# this repository: npm's trusted publishing exchanges the workflow's OIDC
+# token for the right to publish, which is why `id-token: write` is here and
+# why the job installs a current npm.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: The tag names the version being published
+        run: |
+          tag="${{ github.event.release.tag_name }}"
+          version="$(node -p "require('./packages/panelwind/package.json').version")"
+          if [ "$tag" != "v$version" ]; then
+            echo "Tag $tag does not match packages/panelwind version $version." >&2
+            exit 1
+          fi
+
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm publish --provenance --access public
+        working-directory: packages/panelwind

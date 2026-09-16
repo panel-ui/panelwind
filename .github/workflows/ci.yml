@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+
+      # The style table is generated from the installed React Native types.
+      # A hand-edit, or a React Native upgrade nobody regenerated for, shows
+      # up here rather than as a rule quietly giving the wrong answer.
+      - name: Native style table is current
+        run: |
+          npm run native:generate
+          git diff --exit-code packages/panelwind/src/native/style-props.generated.json
+
+      - name: Docs match the plugin's rules
+        run: npm run docs:check
+
+  node20:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
