@@ -56,6 +56,13 @@ aspect ratio, a width taken from a device dimension. Put those in `allow`, or
 turn the rule off for the file — and if a value appears in several places, it is
 a token that has not been declared yet.
 
+## Colours are the other rule's
+
+An arbitrary colour — `bg-[#2563eb]`, `text-[rgb(0,0,0)]` — is left to
+[no-raw-colors](./no-raw-colors.md), which reports it with the token the colour
+is nearest to. One class producing two errors helps nobody, and that is the more
+useful of the two. Turn `no-raw-colors` off and arbitrary colours go unreported.
+
 ## What it does not do
 
 It does not report arbitrary values inside your design system's own components,

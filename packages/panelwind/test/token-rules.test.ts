@@ -55,6 +55,9 @@ tester().run('no-raw-colors', noRawColors as never, {
 tester().run('no-arbitrary-values', noArbitraryValues as never, {
   valid: [
     { code: '<View className="p-4 rounded-lg text-base" />', filename: screen },
+    // B2: an arbitrary colour is no-raw-colors' finding, and one finding is
+    // enough — reported twice, the second report only adds noise.
+    { code: '<View className="text-[#ff0000] bg-[#2563eb]" />', filename: screen },
     { code: '<View className="h-[330px]" />', filename: screen, options: [{ allow: ['h-[330px]'] }] },
   ],
 

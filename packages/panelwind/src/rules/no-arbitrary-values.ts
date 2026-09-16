@@ -72,6 +72,10 @@ export const noArbitraryValues = {
           }
 
           const category = classify(token, vocabulary);
+          // An arbitrary colour is no-raw-colors' finding, and it is the more
+          // useful of the two: it names the token this colour is nearest to.
+          // Reported here as well, one class produces two errors.
+          if (category === 'color') continue;
           const inner = arbitraryValue(name) ?? '';
           const suggestion = stepFor(theme, utilityPrefix(name), inner, category);
 
