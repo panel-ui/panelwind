@@ -101,9 +101,11 @@ tester().run('no-web-only-classes', noWebOnlyClasses as never, {
       ],
     },
     {
+      // C1: a vendor prefix is the same property written for one engine, and
+      // naming both reads as two things React Native is missing.
       code: '<View className="backdrop-blur-sm" />',
       filename: screen,
-      errors: [{ message: /does nothing on a device/ }],
+      errors: [{ message: /React Native has no backdrop-filter\.$/ }],
     },
     {
       code: '<Pressable className="hover:bg-primary" />',

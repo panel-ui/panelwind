@@ -125,9 +125,11 @@ export function declarationVerdict(css: string): Verdict {
       // "React Native has no display" would be false: it has one, and this is
       // not a value it takes. The two are different sentences.
       if (PROPERTIES.has(property) && !DROPPED.has(property)) {
-        unsupportedValues.push({ property: declaration.property, value: declaration.value.trim() });
+        unsupportedValues.push({ property: unprefixed(declaration.property), value: declaration.value.trim() });
       } else {
-        unsupported.add(declaration.property);
+        // `-webkit-backdrop-filter` and `backdrop-filter` are one property
+        // written twice; naming both reads as two things that are missing.
+        unsupported.add(unprefixed(declaration.property));
       }
     }
   }
@@ -247,7 +249,13 @@ function unescape(selector: string): string {
   return selector.replace(/\\/g, '');
 }
 
+const VENDOR = /^-(webkit|moz|ms|o)-/;
+
+function unprefixed(property: string): string {
+  return property.startsWith('--') ? property : property.replace(VENDOR, '');
+}
+
 function camel(property: string): string {
   if (property.startsWith('--')) return property;
-  return property.replace(/^-(webkit|moz|ms|o)-/, '').replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+  return unprefixed(property).replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 }
