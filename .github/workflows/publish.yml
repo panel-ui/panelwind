@@ -33,9 +33,29 @@ jobs:
             exit 1
           fi
 
+      # A version already on the registry is not an error worth failing a
+      # release over: the first publish of a new package has to happen before
+      # trusted publishing can be configured for it, so the tag can arrive
+      # second. Everything after that publishes here.
+      - name: Is this version already published?
+        id: published
+        run: |
+          version="$(node -p "require('./packages/panelwind/package.json').version")"
+          if npm view "panelwind@$version" version >/dev/null 2>&1; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "panelwind@$version is already on the registry; nothing to publish."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - run: npm install -g npm@latest
+        if: steps.published.outputs.already == 'false'
       - run: npm ci
+        if: steps.published.outputs.already == 'false'
       - run: npm run build
+        if: steps.published.outputs.already == 'false'
       - run: npm test
+        if: steps.published.outputs.already == 'false'
       - run: npm publish --provenance --access public
+        if: steps.published.outputs.already == 'false'
         working-directory: packages/panelwind
