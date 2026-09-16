@@ -33,7 +33,11 @@ export const requireStaticClasses = {
         type: 'object',
         properties: {
           message: messageSchema,
-          /** Report everywhere, not only on design-system components. */
+          /**
+           * Report on every element. On by default: a class the bundler never
+           * sees produces no style wherever it is written, and the elements
+           * this rule used to skip are where that is written most often.
+           */
           everywhere: { type: 'boolean' },
           ...recognitionSchema,
         },
@@ -47,11 +51,10 @@ export const requireStaticClasses = {
     const emit = reporter(context, MESSAGES);
     const options = withSettings(context, context.options?.[0] ?? {});
     const custom = typeof options.message === 'string' ? options.message : undefined;
-    const everywhere = options.everywhere === true;
+    const everywhere = options.everywhere !== false;
 
     return classSiteVisitors(context, options, (site) => {
-      // A className a component was handed is the caller's to answer for, and
-      // the caller is where it can be read.
+      // `everywhere: false` narrows the rule back to design-system components.
       if (!site.component && !everywhere) return;
       for (const node of site.unreadable) {
         if (received(node)) continue;

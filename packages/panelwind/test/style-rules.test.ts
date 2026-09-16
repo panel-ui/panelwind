@@ -62,8 +62,12 @@ export function Save({ className }) {
 }`,
       filename: screen,
     },
-    // Not a design-system component, and the rule was not asked to look wider.
-    { code: '<View className={styles} />', filename: screen },
+    // The rule can still be narrowed to design-system components.
+    {
+      code: '<View className={styles} />',
+      filename: screen,
+      options: [{ everywhere: false }],
+    },
     // A1: an empty quasi at either end of a template joins nothing — both
     // branches here are written out, so there is nothing the bundler misses.
     {
@@ -124,6 +128,13 @@ export function Card(props: { className?: string }) {
       code: '<View className={makeClasses(tone)} />',
       filename: screen,
       options: [{ everywhere: true }],
+      errors: [{ message: /cannot be read/ }],
+    },
+    // B1: the most common shape of this bug is on a plain element, and it is
+    // reported without being asked.
+    {
+      code: '<Text className={`p-${size}`} />',
+      filename: screen,
       errors: [{ message: /cannot be read/ }],
     },
   ],
