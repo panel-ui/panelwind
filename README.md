@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  An ESLint plugin for Expo · Reads your theme, components and variants · Knows what a class does on a device
+  An ESLint plugin for Expo and Uniwind · Reads your theme, components and variants · Knows what a class does on a device
 </p>
 
 <p align="center">
@@ -33,7 +33,8 @@ project's stylesheet, its components and their variants, and reports styling tha
 breaks the system — with an error that names the fix in terms of what the project
 already has.
 
-It works with any Expo project styled with Tailwind. A project set up with
+It works with Expo projects styled with [Uniwind](https://docs.uniwind.dev)
+(Tailwind CSS v4). A project set up with
 [PanelUI](https://github.com/panel-ui/PanelUI) needs no configuration at all: its
 `panelui.json` already says where the theme and the components are.
 
