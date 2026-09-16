@@ -101,9 +101,13 @@ function ask(entry: string, tokens: string[]): Reply | null {
 
   const message = receiveMessageOnPort(active.port);
   if (!message) return transportFailed('no answer came back');
-  const { reply } = message.message as { id: number; reply: Reply };
+  const answer = message.message as { id: number; reply: Reply };
+  // A late answer to a question that already timed out is still sitting in the
+  // port. Read as this question's, it would be the CSS for somebody else's
+  // classes, which is worse than no answer at all.
+  if (answer.id !== id) return transportFailed('an answer arrived for a different question');
   restarts = 0;
-  return reply;
+  return answer.reply;
 }
 
 /**
