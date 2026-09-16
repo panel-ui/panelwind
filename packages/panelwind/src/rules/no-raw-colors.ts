@@ -6,8 +6,8 @@
  * colour it will ever be. It will not follow dark mode, and the day the theme
  * changes it stays behind. See docs/rules/no-raw-colors.md.
  */
-import { classify } from '../grammar/categories';
-import { arbitraryValue, isArbitrary, parseClass, utilityName } from '../grammar/classes';
+import { classify, colorParts } from '../grammar/categories';
+import { arbitraryValue, isArbitrary } from '../grammar/classes';
 import { isColorLiteral, nearestToken } from '../grammar/colors';
 import { themeFor } from '../project/theme';
 import { classSiteVisitors } from '../sites/collect';
@@ -88,9 +88,9 @@ export const noRawColors = {
         for (const token of value.split(/\s+/).filter(Boolean)) {
           if (allowed.has(token)) continue;
           if (classify(token, vocabulary) !== 'color') continue;
-          const { base } = parseClass(token);
-          const name = utilityName(base);
-          const colour = name.slice(name.indexOf('-') + 1).split('/')[0]!;
+          const parts = colorParts(token);
+          if (!parts) continue;
+          const colour = parts.value.split('/')[0]!;
           if (theme.colors.has(colour) || KEYWORDS.has(colour)) continue;
 
           // An arbitrary colour carries its own value, so the nearest token
@@ -104,7 +104,7 @@ export const noRawColors = {
               messageId: close ? 'classSuggestion' : 'classToken',
               data: {
                 className: token,
-                suggestion: close ? `${name.slice(0, name.indexOf('-'))}-${nearest.token}` : '',
+                suggestion: close ? `${parts.prefix}-${nearest.token}` : '',
                 file,
                 tokens: listTokens(theme.colors),
               },

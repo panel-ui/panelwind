@@ -136,9 +136,12 @@ function collect(
   }
 
   for (const child of block.children) {
-    // A dark block describes the same tokens in the other theme; suggestions
-    // are made in one of them, and the first one wins.
-    if (/dark/.test(child.prelude) && !/light/.test(child.prelude)) continue;
+    // Every theme declares the same tokens with different values, so only one
+    // of them can be the values suggestions are made from. It is the light
+    // one: a project with six themes would otherwise be read as whichever of
+    // them happened to be written last.
+    const variant = child.prelude.trim().match(/^@variant\s+([\w-]+)/);
+    if (variant && variant[1] !== 'light') continue;
     collect(child, theme, variables, own);
   }
 }

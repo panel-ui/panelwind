@@ -71,6 +71,7 @@ const EXACT: Record<string, Category> = {
 
 const PREFIXES: Record<string, Category> = {
   // Layout: where a thing sits and how big its box is.
+  flex: 'layout',
   w: 'layout',
   h: 'layout',
   size: 'layout',
@@ -261,6 +262,26 @@ export function classify(token: string, vocabulary: Vocabulary = NO_VOCABULARY):
   if (single) return single;
 
   return 'unclassified';
+}
+
+/**
+ * The utility and the colour in a colour class, kept apart: `border-t-info` is
+ * `border-t` and `info`, not `border` and `t-info`. Anything built on the
+ * colour — is it a token, what is it nearest to — needs the second half alone.
+ */
+export function colorParts(token: string): { prefix: string; value: string } | null {
+  const name = utilityName(parseClass(token).base);
+  const [head, ...rest] = name.split('-');
+  if (!head || !rest.length) return null;
+  let prefix = head;
+  let parts = rest;
+  if ((head === 'border' || head === 'divide') && SIDES.has(parts[0]!) && parts.length > 1) {
+    prefix = `${head}-${parts[0]}`;
+    parts = parts.slice(1);
+  }
+  // `border-t-primary` and `text-primary` both end in the colour; a modifier
+  // such as `/40` belongs to the value and is dropped by the caller.
+  return { prefix, value: parts.join('-') };
 }
 
 function borderLike(value: string, vocabulary: Vocabulary): Category {

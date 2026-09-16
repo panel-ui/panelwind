@@ -88,6 +88,20 @@ export function distance(a: Lab, b: Lab): number {
 
 export type Nearest = { token: string; distance: number };
 
+/**
+ * Two tokens often hold the same colour — a semantic one and a chart series,
+ * say. Suggesting either is correct and only one is useful, so a tie goes to
+ * the plainer name.
+ */
+const TIE = 0.0001;
+
+function plainer(candidate: string, incumbent: string): boolean {
+  const steps = (name: string) => name.split('-').length;
+  if (steps(candidate) !== steps(incumbent)) return steps(candidate) < steps(incumbent);
+  if (candidate.length !== incumbent.length) return candidate.length < incumbent.length;
+  return candidate < incumbent;
+}
+
 /** The closest declared token, and how close it is; the caller decides on a threshold. */
 export function nearestToken(value: string, tokens: Map<string, string>): Nearest | null {
   const target = toLab(value);
@@ -97,7 +111,9 @@ export function nearestToken(value: string, tokens: Map<string, string>): Neares
     const lab = toLab(declared);
     if (!lab) continue;
     const away = distance(target, lab);
-    if (!best || away < best.distance) best = { token, distance: away };
+    if (!best || away < best.distance - TIE || (Math.abs(away - best.distance) <= TIE && plainer(token, best.token))) {
+      best = { token, distance: Math.min(away, best?.distance ?? away) };
+    }
   }
   return best;
 }

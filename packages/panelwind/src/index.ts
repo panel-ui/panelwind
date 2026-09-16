@@ -6,6 +6,8 @@
  * class does once it reaches a device. Experimental until 1.0.
  */
 import { configs } from './configs';
+import { classify, CATEGORIES } from './grammar/categories';
+import { parseClass, splitClasses } from './grammar/classes';
 import { plugin } from './plugin';
 import { componentsFor } from './project/components';
 import { projectFor } from './project/config';
@@ -36,6 +38,14 @@ export const project = {
   variantDefinitionsOf,
   variantNamesFor,
   sizeNamesFor,
+};
+
+/** How a class is read: what kind of change it makes, and its parts. */
+export const grammar = {
+  classify,
+  categories: CATEGORIES,
+  parseClass,
+  splitClasses,
 };
 
 export const native = {
