@@ -42,15 +42,32 @@ export function Save({ className }) {
 }
 ```
 
-By default only design-system components are checked, because they are the ones
-whose styling is being decided. `everywhere: true` reports unreadable class
-values on any element.
+The same prop read off the props object — `props.className` — is left alone for
+the same reason.
+
+The `TONE` lookup near the top of this page is read rather than refused: a
+table can only produce one of the values written in it, so those are what is
+checked, and the key it is indexed by does not matter. A table declared in
+another file is a different case — the bundler's scanner cannot see that one
+either, so it is still reported.
+
+## Every element, not only components
+
+Every element is checked. A class the bundler never sees produces no style
+wherever it is written, and a plain `View` is where that is written most often.
+
+```js
+'panelwind/require-static-classes': ['error', { everywhere: false }]
+```
+
+That narrows the rule to design-system components, which is what it did before
+0.2.0.
 
 ## Options
 
 ```js
 'panelwind/require-static-classes': ['error', {
-  everywhere: false,
+  everywhere: true,
   message: 'Write the whole class in each branch.',
 }]
 ```
