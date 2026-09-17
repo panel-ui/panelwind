@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/panelwind"><img alt="npm version and monthly downloads" src="https://shieldcn.dev/group/npm/v/panelwind+npm/dm/panelwind.svg?variant=branded&amp;size=xs" /></a>
+  <a href="https://www.npmjs.com/package/panelwind"><img alt="npm version" src="https://shieldcn.dev/npm/v/panelwind.svg?variant=branded&amp;size=xs" /></a>
   <a href="https://github.com/panel-ui/panelwind"><img alt="GitHub stars, license, contributors and last commit" src="https://shieldcn.dev/group/github/panel-ui/panelwind/stars+github/panel-ui/panelwind/license+github/panel-ui/panelwind/contributors+github/panel-ui/panelwind/last-commit.svg?variant=branded&amp;size=xs" /></a>
 </p>
 
