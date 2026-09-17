@@ -1,6 +1,6 @@
 {
   "name": "panelwind",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An agent-first ESLint plugin for Expo design systems: it reads your Uniwind theme, components and variants, and explains every styling error in terms of what your project already has.",
   "license": "MIT",
   "author": "Khalid Abdi",
