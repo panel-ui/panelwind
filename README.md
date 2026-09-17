@@ -19,11 +19,11 @@
 </p>
 
 <p align="center">
-  <a href="./docs/README.md"><b>Documentation</b></a> ·
-  <a href="#get-started">Get started</a> ·
-  <a href="#rules">Rules</a> ·
-  <a href="./docs/native.md">What React Native drops</a> ·
-  <a href="./docs/adoption.md">Adoption</a>
+  <a href="https://github.com/panel-ui/panelwind/blob/main/docs/README.md"><b>Documentation</b></a> ·
+  <a href="https://github.com/panel-ui/panelwind#get-started">Get started</a> ·
+  <a href="https://github.com/panel-ui/panelwind#rules">Rules</a> ·
+  <a href="https://github.com/panel-ui/panelwind/blob/main/docs/native.md">What React Native drops</a> ·
+  <a href="https://github.com/panel-ui/panelwind/blob/main/docs/adoption.md">Adoption</a>
 </p>
 
 ---
