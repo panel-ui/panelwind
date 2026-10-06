@@ -58,12 +58,19 @@
     "@typescript-eslint/parser": "^8.40.0"
   },
   "peerDependencies": {
-    "eslint": ">=9.30.0"
+    "eslint": ">=9.30.0",
+    "oxc-parser": ">=0.150.0"
+  },
+  "peerDependenciesMeta": {
+    "oxc-parser": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/core": "^0.17.0",
     "@types/node": "^22.10.0",
     "eslint": "^9.33.0",
+    "oxc-parser": "^0.152.0",
     "react-native": "0.86.2",
     "tailwindcss": "^4.3.0",
     "tsdown": "^0.12.0",

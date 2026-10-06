@@ -107,7 +107,15 @@ npx eslint .
 ```
 
 The preset configures the parser, so it works on a `.tsx` project with nothing
-else set up. Then add the command to the file your agent reads:
+else set up. To find variants, panelwind also reads your component files; it
+uses `oxc-parser` for that when it is installed, which needs no TypeScript
+compiler and so also works on TypeScript 7:
+
+```bash
+npm install -D oxc-parser
+```
+
+Then add the command to the file your agent reads:
 
 ```md
 After making changes, run `npm run lint` and fix everything it reports.

@@ -9,14 +9,22 @@
  * and a plugin that assumes an existing parser setup is a plugin that reports
  * nothing on half of them.
  */
-import tsParser from '@typescript-eslint/parser';
+import { createRequire } from 'node:module';
 
 import { plugin } from './plugin';
 
+const requireParser = createRequire(import.meta.url);
+
 const FILES = ['**/*.{js,jsx,ts,tsx,mjs,cjs}'];
 
+/**
+ * The parser is read when a preset is used, not when the plugin is imported:
+ * a host that brings its own parser loads the rules without it.
+ */
 const language = {
-  parser: tsParser as never,
+  get parser(): never {
+    return requireParser('@typescript-eslint/parser') as never;
+  },
   ecmaVersion: 2022 as const,
   sourceType: 'module' as const,
   parserOptions: { ecmaFeatures: { jsx: true } },

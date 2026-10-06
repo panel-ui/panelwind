@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **Component files are read with `oxc-parser` when it is installed.** It
+  needs no TypeScript compiler, so variants and wrappers are found in a project
+  whose compiler is TypeScript 7, which `@typescript-eslint/parser` refuses to
+  load. `@typescript-eslint/parser` stays the fallback. Both are loaded on
+  first use instead of when the plugin is imported, and the presets read theirs
+  when they are used. `oxc-parser` is an optional peer dependency.
+
 ## [0.2.0] — 2026-09-17
 
 An external review of 0.1.0, verified case by case. Six of the reported
